@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.groupBoxHistory = new System.Windows.Forms.GroupBox();
-            this.plotView1 = new OxyPlot.WindowsForms.PlotView();
+            this.plotViewHistory = new OxyPlot.WindowsForms.PlotView();
             this.label1 = new System.Windows.Forms.Label();
             this.comboBoxChartSelection = new System.Windows.Forms.ComboBox();
             this.groupBoxHistory.SuspendLayout();
@@ -40,7 +40,7 @@
             this.groupBoxHistory.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBoxHistory.Controls.Add(this.plotView1);
+            this.groupBoxHistory.Controls.Add(this.plotViewHistory);
             this.groupBoxHistory.Controls.Add(this.label1);
             this.groupBoxHistory.Controls.Add(this.comboBoxChartSelection);
             this.groupBoxHistory.Location = new System.Drawing.Point(3, 3);
@@ -50,20 +50,20 @@
             this.groupBoxHistory.TabStop = false;
             this.groupBoxHistory.Text = "История";
             // 
-            // plotView1
+            // plotViewHistory
             // 
-            this.plotView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.plotViewHistory.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.plotView1.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.plotView1.Location = new System.Drawing.Point(6, 44);
-            this.plotView1.Name = "plotView1";
-            this.plotView1.PanCursor = System.Windows.Forms.Cursors.Hand;
-            this.plotView1.Size = new System.Drawing.Size(626, 336);
-            this.plotView1.TabIndex = 2;
-            this.plotView1.ZoomHorizontalCursor = System.Windows.Forms.Cursors.SizeWE;
-            this.plotView1.ZoomRectangleCursor = System.Windows.Forms.Cursors.SizeNWSE;
-            this.plotView1.ZoomVerticalCursor = System.Windows.Forms.Cursors.SizeNS;
+            this.plotViewHistory.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.plotViewHistory.Location = new System.Drawing.Point(6, 44);
+            this.plotViewHistory.Name = "plotViewHistory";
+            this.plotViewHistory.PanCursor = System.Windows.Forms.Cursors.Hand;
+            this.plotViewHistory.Size = new System.Drawing.Size(626, 336);
+            this.plotViewHistory.TabIndex = 2;
+            this.plotViewHistory.ZoomHorizontalCursor = System.Windows.Forms.Cursors.SizeWE;
+            this.plotViewHistory.ZoomRectangleCursor = System.Windows.Forms.Cursors.SizeNWSE;
+            this.plotViewHistory.ZoomVerticalCursor = System.Windows.Forms.Cursors.SizeNS;
             // 
             // label1
             // 
@@ -99,7 +99,7 @@
         #endregion
 
         private System.Windows.Forms.GroupBox groupBoxHistory;
-        private OxyPlot.WindowsForms.PlotView plotView1;
+        private OxyPlot.WindowsForms.PlotView plotViewHistory;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox comboBoxChartSelection;
     }

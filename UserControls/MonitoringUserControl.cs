@@ -19,7 +19,7 @@ namespace SkyStsWinForm
     {
 
         private BufferDataGraph bufferDataGraph  = new BufferDataGraph();
-        private ManagementGraph management = new ManagementGraph();
+        private ManagerGraph management = new ManagerGraph();
 
         private bool SubscribeToTimerEvent = false;
         private bool DisableFollowGraph = false;
@@ -33,7 +33,7 @@ namespace SkyStsWinForm
         { 
             InitializeComponent();
 
-            management = new ManagementGraph(bufferDataGraph, OxyPlotGraphView.Model);
+            management = new ManagerGraph(bufferDataGraph, OxyPlotGraphView.Model);
             management.DrawOxyPlotGraph();
 
             comboBoxViewPoints.SelectedIndex = 0;

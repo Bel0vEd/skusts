@@ -6,12 +6,12 @@ namespace SkyStsWinForm.Classes
 {
     class BufferDataGraph
     {
-        private Random rnd = new Random();
+        private readonly Random rnd = new Random();
         private int DrawNumber2 = 0;
 
-        public List<int> PointFirstGraph1 { get; set; } = new List<int>();
+        public List<double> PointFirstGraph1 { get; set; } = new List<double>();
         public List<DateTime> DateFirstGraph1 { get; set; } = new List<DateTime>();
-        public List<int> PointTwoGraph1 { get; set; } = new List<int>();
+        public List<double> PointTwoGraph1 { get; set; } = new List<double>();
         public List<DateTime> DateTwoGraph1 { get; set; } = new List<DateTime>();
         public MarkerType MarkerType  { get; set; }
 
@@ -26,6 +26,11 @@ namespace SkyStsWinForm.Classes
             int rand = rnd.Next(5, 10);
             PointTwoGraph1.Add(DrawNumber2 + rand);
             DateTwoGraph1.Add(startDate);
+        }
+
+        public void SetDataFromDatabase()
+        {
+
         }
     }
 }
