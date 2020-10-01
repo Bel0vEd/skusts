@@ -12,7 +12,7 @@ namespace SkyStsWinForm
         private readonly BufferDataGraph BufferDataGraph;
         private int RangeOfDrawingSecond = -1;
 
-        public ManagerGraph(BufferDataGraph bufferDataGraph = null, PlotModel Model = null)
+        public ManagerGraph(BufferDataGraph bufferDataGraph, PlotModel Model = null)
         {
             this.Model = Model;
             BufferDataGraph = bufferDataGraph;
@@ -23,15 +23,24 @@ namespace SkyStsWinForm
             this.RangeOfDrawingSecond = rangeOfrawingSecond;
         }
 
+        int flag;
 
-
-        public PlotModel DrawOxyPlotGraph()
+        public PlotModel DrawOxyPlotGraph(int a)
         {
-            Model = new PlotModel {
-                LegendTitle = "DateTimeAxis",
+            flag = a;
+            Model = new PlotModel
+            {
+                LegendTitle = "Графики",
                 LegendOrientation = LegendOrientation.Horizontal,
                 LegendPlacement = LegendPlacement.Outside,
-                LegendPosition = LegendPosition.TopRight
+                LegendPosition = LegendPosition.TopRight,
+                LegendTextColor = OxyColors.White,
+                LegendTitleColor = OxyColors.White,
+                PlotAreaBorderColor = OxyColors.White,
+                SubtitleColor = OxyColors.White,
+                SelectionColor = OxyColors.White,
+                TextColor = OxyColors.White,
+                TitleColor = OxyColors.White
             };
 
             
@@ -40,7 +49,7 @@ namespace SkyStsWinForm
             {
                 Model.Axes.Clear();
             }
-
+            Model.GetDefaultColor();
             if (RangeOfDrawingSecond == -1)
             {
                 Model = SettingDrawDefaultPosition(Model);
@@ -65,34 +74,68 @@ namespace SkyStsWinForm
             Model.Series.Clear();
             for (int i = 0; i < 2; i++)
             {
-               var lineSerie = new LineSeries()
+                var lineSerie = new LineSeries()
                 {
-                    StrokeThickness = 2,
+                    StrokeThickness = 3,
                     MarkerSize = 3,
-                    MarkerStroke = OxyColors.AliceBlue,
+                    MarkerStrokeThickness = 1,
+                    MarkerStroke = OxyColors.White,
+                    MarkerFill = OxyColors.White,
                     MarkerType = BufferDataGraph.MarkerType,
                     CanTrackerInterpolatePoints = false,
                     Title = string.Format("Detector {0}", i),
                     Smooth = false,
                 };
-                if (i == 0)
+                if (flag == 1)
                 {
-                    int j = 0;
-                    foreach (var item in BufferDataGraph.PointFirstGraph1)
+                    if (i == 0)
                     {
-                        
-                        lineSerie.Points.Add(new DataPoint(DateTimeAxis.ToDouble(BufferDataGraph.DateFirstGraph1[j]), item));
-                        j++;
+                        lineSerie.Color = OxyColors.Yellow;
+                        lineSerie.Title = "Момент (кН*м)";
+                        int j = 0;
+                        foreach (var item in BufferDataGraph.PointFirstGraph1)
+                        {
+
+                            lineSerie.Points.Add(new DataPoint(DateTimeAxis.ToDouble(BufferDataGraph.DateFirstGraph1[j]), item));
+                            j++;
+                        }
+                    }
+                    if (i == 1)
+                    {
+                        lineSerie.Color = OxyColors.Green;
+                        lineSerie.Title = "Позиция (обор.)";
+                        int j = 0;
+                        foreach (var item in BufferDataGraph.PointTwoGraph1)
+                        {
+                            lineSerie.Points.Add(new DataPoint(DateTimeAxis.ToDouble(BufferDataGraph.DateTwoGraph1[j]), item));
+                            j++;
+                        }
                     }
                 }
-
-                if (i == 1)
+                if (flag == 2)
                 {
-                    int j = 0;
-                    foreach (var item in BufferDataGraph.PointTwoGraph1)
+                    if (i == 0)
                     {
-                        lineSerie.Points.Add(new DataPoint(DateTimeAxis.ToDouble(BufferDataGraph.DateTwoGraph1[j]), item));
-                        j++;
+                        lineSerie.Color = OxyColors.Yellow;
+                        lineSerie.Title = "Момент (кН*м)";
+                        int j = 0;
+                        foreach (var item in BufferDataGraph.PointFirstGraph1)
+                        {
+
+                            lineSerie.Points.Add(new DataPoint(DateTimeAxis.ToDouble(BufferDataGraph.TimeFirstGraph[j]), item));
+                            j++;
+                        }
+                    }
+                    if (i == 1)
+                    {
+                        lineSerie.Color = OxyColors.Green;
+                        lineSerie.Title = "Позиция (обор.)";
+                        int j = 0;
+                        foreach (var item in BufferDataGraph.PointTwoGraph1)
+                        {
+                            lineSerie.Points.Add(new DataPoint(DateTimeAxis.ToDouble(BufferDataGraph.TimeSecondGraph[j]), item));
+                            j++;
+                        }
                     }
                 }
                 Model.Series.Add(lineSerie);
@@ -106,6 +149,11 @@ namespace SkyStsWinForm
             var maxValue = DateTimeAxis.ToDouble(DateTime.Now.AddSeconds(0));
             plotModel.Axes.Add(new DateTimeAxis
             {
+                ExtraGridlineColor = OxyColors.White,
+                MajorGridlineColor = OxyColors.White,
+                MinorGridlineColor = OxyColors.White,
+                MinorTicklineColor = OxyColors.White,
+                TicklineColor = OxyColors.White,
                 Position = AxisPosition.Bottom,
                 Minimum = minValue,
                 Maximum = maxValue,
@@ -114,10 +162,16 @@ namespace SkyStsWinForm
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dot,
                 Title = "Data"
-            });
+                
+            });;
 
             plotModel.Axes.Add(new LinearAxis()
             {
+                ExtraGridlineColor = OxyColors.White,
+                MajorGridlineColor = OxyColors.White,
+                MinorGridlineColor = OxyColors.White,
+                MinorTicklineColor = OxyColors.White,
+                TicklineColor = OxyColors.White,
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dot,
                 Title = "Value"
@@ -129,6 +183,11 @@ namespace SkyStsWinForm
         {
             plotModel.Axes.Add(new DateTimeAxis
             {
+                ExtraGridlineColor = OxyColors.White,
+                MajorGridlineColor = OxyColors.White,
+                MinorGridlineColor = OxyColors.White,
+                MinorTicklineColor = OxyColors.White,
+                TicklineColor = OxyColors.White,
                 Position = AxisPosition.Bottom,
                 Minimum = ((PlotModel)BufferDataGraph.Parent).DefaultXAxis.ActualMinimum,
                 Maximum = ((PlotModel)BufferDataGraph.Parent).DefaultXAxis.ActualMaximum,
@@ -141,6 +200,11 @@ namespace SkyStsWinForm
 
             plotModel.Axes.Add(new LinearAxis()
             {
+                ExtraGridlineColor = OxyColors.White,
+                MajorGridlineColor = OxyColors.White,
+                MinorGridlineColor = OxyColors.White,
+                MinorTicklineColor = OxyColors.White,
+                TicklineColor = OxyColors.White,
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dot,
                 Minimum = ((PlotModel)BufferDataGraph.Parent).DefaultYAxis.ActualMinimum,
@@ -152,19 +216,46 @@ namespace SkyStsWinForm
 
         private PlotModel SettingDrawDefaultPosition(PlotModel plotModel)
         {
-            plotModel.Axes.Add(new DateTimeAxis
+            if (flag == 1)
             {
-                Position = AxisPosition.Bottom,
-
-                StringFormat = "HH:mm:ss",
-                IntervalLength = 50,
-                MajorGridlineStyle = LineStyle.Solid,
-                MinorGridlineStyle = LineStyle.Dot,
-                Title = "Data"
-            });
-
+                plotModel.Axes.Add(new DateTimeAxis
+                {
+                    ExtraGridlineColor = OxyColors.White,
+                    MajorGridlineColor = OxyColors.White,
+                    MinorGridlineColor = OxyColors.White,
+                    MinorTicklineColor = OxyColors.White,
+                    Position = AxisPosition.Bottom,
+                    TicklineColor = OxyColors.White,
+                    StringFormat = "HH:mm:ss",
+                    IntervalLength = 50,
+                    MajorGridlineStyle = LineStyle.Solid,
+                    MinorGridlineStyle = LineStyle.Dot,
+                    Title = "Data"
+                });
+            }
+            if (flag == 2)
+            {
+                plotModel.Axes.Add(new LinearAxis()
+                {
+                    ExtraGridlineColor = OxyColors.White,
+                    MajorGridlineColor = OxyColors.White,
+                    MinorGridlineColor = OxyColors.White,
+                    MinorTicklineColor = OxyColors.White,
+                    Position = AxisPosition.Bottom,
+                    TicklineColor = OxyColors.White,
+                    IntervalLength = 50,
+                    MajorGridlineStyle = LineStyle.Solid,
+                    MinorGridlineStyle = LineStyle.Dot,
+                    Title = "Data"
+                });
+            }
             plotModel.Axes.Add(new LinearAxis()
             {
+                ExtraGridlineColor = OxyColors.White,
+                MajorGridlineColor = OxyColors.White,
+                MinorGridlineColor = OxyColors.White,
+                MinorTicklineColor = OxyColors.White,
+                TicklineColor = OxyColors.White,
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dot,
                 Title = "Value"

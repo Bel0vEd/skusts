@@ -117,13 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="FollowingTheChart" xml:space="preserve">
-    <value>true</value>
-  </data>
-  <data name="NumberOfSecondsX-axis" xml:space="preserve">
-    <value>-2</value>
-  </data>
-  <data name="TypeOfPointsOnTheChart" xml:space="preserve">
-    <value>0</value>
-  </data>
+  <metadata name="toolTipTurnoverEncoder.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
 </root>

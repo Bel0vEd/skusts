@@ -11,15 +11,15 @@ using OxyPlot.Series;
 using OxyPlot.WindowsForms;
 using SkyStsWinForm.Classes;
 using OxyPlot;
-using System.Resources;
+using wpf = WpfControlLibrary1;
 
-namespace SkyStsWinForm
+namespace SkyStsWinForm.UserControls
 {
     public partial class MonitoringUserControl : UserControl
     {
 
-        private BufferDataGraph bufferDataGraph  = new BufferDataGraph();
-        private ManagerGraph management = new ManagerGraph();
+        private BufferDataGraph bufferDataGraph = new BufferDataGraph();
+        private ManagerGraph management = new ManagerGraph(null);
 
         private bool SubscribeToTimerEvent = false;
         private bool DisableFollowGraph = false;
@@ -28,36 +28,45 @@ namespace SkyStsWinForm
         {
             Interval = 1000
         };
-
+        private wpf.UserControl1 uc;
         public MonitoringUserControl()
-        { 
+        {
             InitializeComponent();
-
+            tabControl1.TabPages[0].Text = "График";
+            tabControl1.TabPages[1].Text = "Индикаторы";
+            uc = wpf.UserControl1.Instance;
             management = new ManagerGraph(bufferDataGraph, OxyPlotGraphView.Model);
-            management.DrawOxyPlotGraph();
-
+            management.DrawOxyPlotGraph(1);
+            
             comboBoxViewPoints.SelectedIndex = 0;
             MonitoringOfIndicators();
+      
         }
-        
+
         #region Вызов методов получения данных и рисование графика
         private void DrawOxyPlotGraph(object sender, EventArgs e)
         {
             if (DisableFollowGraph == false)
             {
                 bufferDataGraph.GetDataFromDevice();
+                if (bufferDataGraph.PointFirstGraph1.Count != 0)
+                {
+                    uc.setValueMoment(bufferDataGraph.PointFirstGraph1[bufferDataGraph.PointFirstGraph1.Count - 1]);
+
+                }
                 bufferDataGraph.Parent = OxyPlotGraphView.Model.Axes[0].Parent;
-
-                OxyPlotGraphView.Model = management.DrawOxyPlotGraph();
-
-                
+                OxyPlotGraphView.Model = management.DrawOxyPlotGraph(1);
             }
             else
             {
                 bufferDataGraph.Parent = OxyPlotGraphView.Model.Axes[0].Parent;
-
                 bufferDataGraph.GetDataFromDevice();
-                OxyPlotGraphView.Model = management.DrawOxyPlotGraph();
+                if (bufferDataGraph.PointFirstGraph1.Count != 0)
+                {
+                    uc.setValueMoment(bufferDataGraph.PointFirstGraph1[bufferDataGraph.PointFirstGraph1.Count - 1]);
+
+                }
+                OxyPlotGraphView.Model = management.DrawOxyPlotGraph(1);
             }
 
         }
@@ -69,7 +78,7 @@ namespace SkyStsWinForm
             if (SubscribeToTimerEvent == false)
             {
                 SubscribeToTimerEvent = true;
-                
+
                 FormTimer.Start();
                 FormTimer.Tick += new EventHandler(DrawOxyPlotGraph);
             }
@@ -92,7 +101,7 @@ namespace SkyStsWinForm
                 management.Set_RangeOfrawingSecond(-1);
                 buttonChangeDisplayModeGraph.Text = "Отключить следование за графиком";
             }
-            OxyPlotGraphView.Model = management.DrawOxyPlotGraph();
+            OxyPlotGraphView.Model = management.DrawOxyPlotGraph(1);
         }
         #endregion
 
@@ -101,7 +110,7 @@ namespace SkyStsWinForm
         {
             DisableFollowGraph = true;
             buttonChangeDisplayModeGraph.Text = "Включить следование за графиком";
-            if (Convert.ToInt32(textBoxCountDiapasonTestimony.Text) > 0 && 
+            if (Convert.ToInt32(textBoxCountDiapasonTestimony.Text) > 0 &&
                 Convert.ToInt32(textBoxCountDiapasonTestimony.Text) < 10000)
             {
                 management.Set_RangeOfrawingSecond(Convert.ToInt32(textBoxCountDiapasonTestimony.Text));
@@ -111,7 +120,7 @@ namespace SkyStsWinForm
             {
                 MessageBox.Show("Количество секунд не может быть отрицательным и быть больше 9999");
             }
-            OxyPlotGraphView.Model = management.DrawOxyPlotGraph();
+            OxyPlotGraphView.Model = management.DrawOxyPlotGraph(1);
         }
         #endregion
 
@@ -125,22 +134,16 @@ namespace SkyStsWinForm
                     bufferDataGraph.MarkerType = MarkerType.None;
                     break;
                 case 1:
-                    bufferDataGraph.MarkerType = MarkerType.Cross;
-                    break;
-                case 2:
                     bufferDataGraph.MarkerType = MarkerType.Diamond;
                     break;
-                case 3:
+                case 2:
                     bufferDataGraph.MarkerType = MarkerType.Circle;
                     break;
-                case 4:
-                    bufferDataGraph.MarkerType = MarkerType.Plus;
-                    break;
-                case 5:
+                case 3:
                     bufferDataGraph.MarkerType = MarkerType.Square;
                     break;
             }
-            OxyPlotGraphView.Model = management.DrawOxyPlotGraph();
+            OxyPlotGraphView.Model = management.DrawOxyPlotGraph(1);
         }
         #endregion
 
@@ -150,5 +153,20 @@ namespace SkyStsWinForm
             FormTimer.Tick -= DrawOxyPlotGraph;
         }
         #endregion
+
+        int valueGauge = 10;
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            if (MomentText.Visible == false)
+            {
+                MomentText.Visible = true;
+                RevolutionText.Visible = true;
+            }
+            valueGauge += 10;
+            uc.setValueMoment(valueGauge);
+            uc.setValueRevolution(valueGauge / 2);
+            MomentText.Text = valueGauge.ToString() + " Mp, кН*м";
+            RevolutionText.Text = (valueGauge/2).ToString() + " оборотов";
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Management.Instrumentation;
 using System.Windows.Forms;
 
 namespace SkyStsWinForm
@@ -7,34 +8,54 @@ namespace SkyStsWinForm
 
     public partial class Viewer : Form
     {
-
-
+        public static Viewer Instance { get; private set; }
         private ConnectUserControl connectUserControl = new ConnectUserControl();
-        private MonitoringUserControl monitoringControl = new MonitoringUserControl();
+        private UserControls.MonitoringUserControl monitoringControl = new UserControls.MonitoringUserControl();
         private HisrotyUserControl hisrotyUserControl = new HisrotyUserControl();
+
+        public void setScaleUserControl()
+        {
+            ReplacementOrCreateUserControl("MonitoringScaleUserControl");
+        }
 
         private Control saveConnectUserControl;
         private Control saveMonitoringUserControl;
         private Control saveHisrotyUserControl;
+        public static void setMaxCountLogsFromDevice(int NumberLogs)
+        {
+            Action action = () =>  Instance.progressBarLogLoad.Maximum = NumberLogs; //Viewer.setMaxPrigressBar(NumberLogs);
+            Instance.progressBarLogLoad.Invoke(action);
+        }
 
+        private Timer FormTimer = new Timer
+        {
+            Interval = 60000
+        };
         private readonly ContextMenu m_menu = new ContextMenu();
-
+        
+        
         public Viewer()
         {
             InitializeComponent();
+            Instance = this;
 
 
+            DateTime ThToday = DateTime.Now;
+            connectUserControl.Width = panelUserControl.Width;
+            connectUserControl.Height = panelUserControl.Height;
             m_menu.MenuItems.Add(0, new MenuItem("Развернуть приложение", new System.EventHandler(DeployApplication)));
             m_menu.MenuItems.Add(1, new MenuItem("Выход", new System.EventHandler(CloseWinForm_onClick)));
             notifyIconTray.ContextMenu = m_menu;
-
             connectUserControl.Parent = panelUserControl;
             notifyIconTray.Visible = false;
         }
 
         private void ButtonMenuConnectDevice_Click(object sender, EventArgs e)
         {
-            ReplacementAndCreateUserControl("ConnectUserControl");
+
+            SidePanel.Height = BussonMenuConnectDevice.Height;
+            SidePanel.Top = BussonMenuConnectDevice.Top;
+            ReplacementOrCreateUserControl("ConnectUserControl");
         }
 
         private void SaveControlStatus()
@@ -51,10 +72,11 @@ namespace SkyStsWinForm
                 case "HistoryUserControl":
                     saveHisrotyUserControl = panelUserControl.Controls[0];
                     break;
+                
             }
         }
 
-        private void ReplacementAndCreateUserControl(string CreateUserControl)
+        private void ReplacementOrCreateUserControl(string CreateUserControl)
         {
             switch (CreateUserControl)
             {
@@ -101,7 +123,6 @@ namespace SkyStsWinForm
                     }
                     break;
                  case "HistoryUserControl":
-
                     if (panelUserControl.Controls.Count == 0)
                     {
                         hisrotyUserControl.Parent = panelUserControl;
@@ -121,13 +142,22 @@ namespace SkyStsWinForm
                         }
                     }
                     break;
+               
             }
         }
-
+        
+        #region Создание окна мониторинга
         private void ButtonMenuMonitoringOfIndicators_Click(object sender, EventArgs e)
         {
-            ReplacementAndCreateUserControl("MonitoringUserControl");
+            SidePanel.Height = ButtonMenuMonitoringOfIndicators.Height;
+            SidePanel.Top = ButtonMenuMonitoringOfIndicators.Top;
+            ReplacementOrCreateUserControl("MonitoringUserControl");
+
+            //пока что запустим индикаторы
+            //ReplacementOrCreateUserControl("MonitoringScaleUserControl");
+
         }
+        #endregion
 
         #region Обработчик сворачивания окна       
         private void WindowForm_Minimized(object sender, EventArgs e)
@@ -139,9 +169,23 @@ namespace SkyStsWinForm
                 // делаем нашу иконку в трее активной
                 notifyIconTray.Visible = false;
             }
+            if (WindowState == FormWindowState.Maximized)
+            {
+                connectUserControl.Width = panelUserControl.Width;
+                connectUserControl.Height = panelUserControl.Height;
+            }
+            if(WindowState == FormWindowState.Normal)
+            {
+                connectUserControl.Width = panelUserControl.Width;
+                connectUserControl.Height = panelUserControl.Height;
+            }
         }
         #endregion
-
+        private void Viewer_Resize(object sender, EventArgs e)
+        {
+            connectUserControl.Width = panelUserControl.Width;
+            connectUserControl.Height = panelUserControl.Height;
+        }
         #region Обработка нажатий для iconTray 
         private void NotifyIconTray_MouseDoubleClick(object sender, MouseEventArgs e)
         {
@@ -173,6 +217,7 @@ namespace SkyStsWinForm
 
         private void CloseWinForm_onClick(object sender, EventArgs e)
         {
+            connectUserControl.disconnectSKU();
             notifyIconTray.Visible = false;
             Environment.Exit(0);
         }
@@ -181,9 +226,41 @@ namespace SkyStsWinForm
         #region Создание окна истории
         private void ButtonMenuHistory_Click(object sender, EventArgs e)
         {
-            ReplacementAndCreateUserControl("HistoryUserControl");
+            hisrotyUserControl.getItemsCB();
+            SidePanel.Height = ButtonMenuHistory.Height;
+            SidePanel.Top = ButtonMenuHistory.Top;
+            ReplacementOrCreateUserControl("HistoryUserControl");
             
+
         }
         #endregion
+        public static void setProgressBar(int CurrentRedRecordLog)
+        {
+            try
+            {
+                Action action = () => Instance.progressBarLogLoad.Value = CurrentRedRecordLog;
+                Instance.progressBarLogLoad.Invoke(action);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                Console.WriteLine("Как-то так получилось, что " + (Instance.progressBarLogLoad.Maximum + CurrentRedRecordLog) + " превысило " + Instance.progressBarLogLoad.Maximum);
+            }
+        }
+
+        public static void showProgressBarUpdateLogs()
+        {
+            Action action = () => Instance.progressBarLogLoad.Visible = true;
+            Instance.progressBarLogLoad.Invoke(action);
+            action = () => Instance.labelUpdateData.Visible = true;
+            Instance.progressBarLogLoad.Invoke(action);
+          
+        }
+        public static void hideProgressBarUpdateLogs()
+        {
+            Action action = () => Instance.progressBarLogLoad.Visible = false;
+            Instance.progressBarLogLoad.Invoke(action);
+            action = () => Instance.labelUpdateData.Visible = false;
+            Instance.progressBarLogLoad.Invoke(action);
+        }
     }
 }

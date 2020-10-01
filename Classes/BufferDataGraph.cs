@@ -1,36 +1,40 @@
-﻿using OxyPlot;
+﻿using EasyModbus;
+using OxyPlot;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SkyStsWinForm.Classes
 {
-    class BufferDataGraph
+    public class BufferDataGraph
     {
-        private readonly Random rnd = new Random();
-        private int DrawNumber2 = 0;
-
         public List<double> PointFirstGraph1 { get; set; } = new List<double>();
+        public List<double> TimeFirstGraph { get; set; } = new List<double>();
+        public List<double> TimeSecondGraph { get; set; } = new List<double>();
         public List<DateTime> DateFirstGraph1 { get; set; } = new List<DateTime>();
         public List<double> PointTwoGraph1 { get; set; } = new List<double>();
         public List<DateTime> DateTwoGraph1 { get; set; } = new List<DateTime>();
         public MarkerType MarkerType  { get; set; }
+        private ModbusClient modbusClient;
 
         public Model Parent { get; set; }
-
-        public void GetDataFromDevice()
+        public async void GetDataFromDevice()
         {
-            var startDate = DateTime.Now;
-            DrawNumber2 += rnd.Next(0, 5);
-            PointFirstGraph1.Add(DrawNumber2);
-            DateFirstGraph1.Add(startDate);
-            int rand = rnd.Next(5, 10);
-            PointTwoGraph1.Add(DrawNumber2 + rand);
-            DateTwoGraph1.Add(startDate);
-        }
+            modbusClient = ConnectUserControl.getModbusClient();
+            if (modbusClient != null && modbusClient.Connected == true)
+            {
+                //var startDate = Convert.ToDateTime(ConnectUserControl.getDateTimeFromDevice());
+                var startDate = await Task.Run(() => Convert.ToDateTime(ConnectUserControl.getDateTimeFromDevice()));
+                float[] data = await Task.Run(() => ConnectUserControl.getMomentAndDate()); 
 
-        public void SetDataFromDatabase()
-        {
-
+                if (data != null)
+                {
+                    PointFirstGraph1.Add(data[0]);//момент
+                    DateFirstGraph1.Add(startDate);
+                    PointTwoGraph1.Add(data[1]);  //date
+                    DateTwoGraph1.Add(startDate);
+                }
+            }
         }
     }
 }
